@@ -34,3 +34,8 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+notes.otl
+.rottentomatoes_api_key
+.freebase_api_key
+src/rottentomatoes_api_key.py
