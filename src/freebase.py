@@ -1,39 +1,37 @@
-import json
-import urllib
+from apiclient import APIClient, RateLimiter
 
-api_file = '.freebase_api_key'
-api_key = open(api_file).read()
-service_url = 'https://www.googleapis.com/freebase/v1/search'
+class FreebaseAPI(APIClient):
+  API_FILE = '.freebase_api_key'
+  API_KEY = open(API_FILE).read()
+  BASE_URL = 'https://www.googleapis.com/freebase/v1/'
 
-def search(params):
-  params['key'] = api_key
-  url = service_url + '?' + urllib.urlencode(params)
-  response = json.loads(urllib.urlopen(url).read())
-  result = response['result']
-  return result
+  def search(self,params):
+    params['apikey'] = self.API_KEY
+    path = 'search'
+    return self.call(path, **params)['result']
 
-def actor(name):
-  return search({
-    'filter':'(all name:"'+name+'" type:/film/actor)'
-  })[0] # hope it is the first hit.
+  def actor(self,name):
+    return self.search({
+      'filter':'(all name:"'+name+'" type:/film/actor)'
+    })[0] # hope it is the first hit.
 
-def all_actors():
-  return search({
-    'filter':'(all type:/film/actor)',
-    'limit':'200'
-  })
+  def all_actors(self):
+    return self.search({
+      'filter':'(all type:/film/actor)',
+      'limit':'200'
+    })
 
-def movies(actor_name):
-  return search({
-    'filter':'(all type:/film/film contributor:"'+actor_name+'")',
-    'limit':'200'
-  })
+  def movies(self,actor_name):
+    return self.search({
+      'filter':'(all type:/film/film contributor:"'+actor_name+'")',
+      'limit':'200'
+    })
 
 if __name__ == '__main__':
-  actor = all_actors()[0]
-  #for actor in all_actors():
-  print
+  lock = RateLimiter(max_messages=10, every_seconds=60)
+  fb = FreebaseAPI(rate_limit_lock=lock)
+  actor = fb.all_actors()[0]
   print actor['name']
-  for movie in movies(actor['name']):
+  for movie in fb.movies(actor['name']):
     print movie['name']
 
