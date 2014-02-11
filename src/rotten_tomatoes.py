@@ -1,15 +1,17 @@
-import json
-import urllib
+from apiclient import APIClient
 
-api_file = '.rottentomatoes_api_key'
-api_key = open(api_file).read().rstrip()
-service_url = 'http://api.rottentomatoes.com/api/public/v1.0'
+class RTApi(APIClient):
+  API_FILE = '.rottentomatoes_api_key'
+  API_KEY = open(API_FILE).read().rstrip()
+  BASE_URL = 'http://api.rottentomatoes.com/api/public/v1.0/'
 
-def search(path,params):
-  params['apikey'] = api_key
-  url = service_url + path + '?' + urllib.urlencode(params)
-  response = json.loads(urllib.urlopen(url).read())
-  return response
+  def search(self,path,params):
+    params['apikey'] = self.API_KEY
+    return self.call(path, **params)
 
-def movie(name):
-  return search('/movies.json', {'q': name, 'page_limit':'1'})
+  def movie(self,name):
+    return self.search('movies.json', {'q': name, 'page_limit':'1'})
+
+if __name__ == '__main__':
+  rt = RTApi()
+  print rt.movie('Ronin')
