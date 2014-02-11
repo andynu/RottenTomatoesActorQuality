@@ -8,11 +8,8 @@ service_url = 'http://api.rottentomatoes.com/api/public/v1.0'
 def search(path,params):
   params['apikey'] = api_key
   url = service_url + path + '?' + urllib.urlencode(params)
-  print url
   response = json.loads(urllib.urlopen(url).read())
   return response
 
 def movie(name):
   return search('/movies.json', {'q': name, 'page_limit':'1'})
-
-print movie('Heat')
