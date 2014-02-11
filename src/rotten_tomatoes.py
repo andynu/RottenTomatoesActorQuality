@@ -1,4 +1,4 @@
-from apiclient import APIClient
+from apiclient import APIClient, RateLimiter
 
 class RTApi(APIClient):
   API_FILE = '.rottentomatoes_api_key'
@@ -13,5 +13,6 @@ class RTApi(APIClient):
     return self.search('movies.json', {'q': name, 'page_limit':'1'})
 
 if __name__ == '__main__':
-  rt = RTApi()
+  lock = RateLimiter(max_messages=10, every_seconds=60)
+  rt = RTApi(rate_limit_lock=lock)
   print rt.movie('Ronin')

@@ -1,6 +1,10 @@
 #!/usr/bin/env python
-import rotten_tomatoes as rt
+from apiclient import RateLimiter
+from rotten_tomatoes import RTApi
 import freebase as fb
+
+lock = RateLimiter(max_messages=10, every_seconds=60)
+rt = RTApi(rate_limit_lock=lock)
 
 actors = fb.all_actors()
 actors = actors[0:1]
