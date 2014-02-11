@@ -1,7 +1,7 @@
 import json
 import urllib
 
-api_file = '/home/andy/RottenTomatoesActorQuality/.freebase_api_key'
+api_file = '.freebase_api_key'
 api_key = open(api_file).read()
 service_url = 'https://www.googleapis.com/freebase/v1/search'
 
@@ -30,9 +30,10 @@ def movies(actor_name):
   })
 
 if __name__ == '__main__':
-  for actor in all_actors():
-    print
-    print actor['name']
-    for movie in movies(actor['name']):
-      print movie['name']
+  actor = all_actors()[0]
+  #for actor in all_actors():
+  print
+  print actor['name']
+  for movie in movies(actor['name']):
+    print movie['name']
 
