@@ -8,6 +8,7 @@ class FreebaseAPI(APIClient):
   def search(self,params):
     params['apikey'] = self.API_KEY
     path = 'search'
+    print params
     return self.call(path, **params)['result']
 
   def actor(self,name):
@@ -18,7 +19,7 @@ class FreebaseAPI(APIClient):
   def all_actors(self):
     return self.search({
       'filter':'(all type:/film/actor)',
-      'limit':'200'
+      'start':200,'limit':200
     })
 
   def movies(self,actor_name):
